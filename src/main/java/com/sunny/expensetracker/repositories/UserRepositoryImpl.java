@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -25,11 +27,15 @@ public class UserRepositoryImpl implements UserRepository {
 	private static final String SQL_FIND_BY_ID = "SELECT USER_ID, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD "
 			+ "FROM ET_USERS WHERE USER_ID = ?";
 	
+	private static final String SQL_FIND_BY_EMAIL = "SELECT USER_ID, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD "
+			+ "FROM ET_USERS WHERE EMAIL = ?";
+	
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 	
 	@Override
 	public Integer create(String firstName, String lastName, String email, String password) throws EtAuthException {
+		String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(10));
 		try {
 			KeyHolder keyHolder = new GeneratedKeyHolder();
 			jdbcTemplate.update(connection -> {
@@ -37,7 +43,7 @@ public class UserRepositoryImpl implements UserRepository {
 				ps.setString(1,  firstName);
 				ps.setString(2, lastName);
 				ps.setString(3, email);
-				ps.setString(4, password);
+				ps.setString(4, hashedPassword);
 				return ps;
 			}, keyHolder);
 			return (Integer) keyHolder.getKeys().get("USER_ID");
@@ -48,8 +54,14 @@ public class UserRepositoryImpl implements UserRepository {
 
 	@Override
 	public User findByEmailAndPassword(String email, String password) throws EtAuthException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			User user = jdbcTemplate.queryForObject(SQL_FIND_BY_EMAIL, userRowMapper, email);
+			if (!BCrypt.checkpw(password, user.getPassword()))
+				throw new EtAuthException("Invalid email/password");
+			return user;
+		} catch (EmptyResultDataAccessException e) {
+			throw new EtAuthException("Invalid email/password");
+		}
 	}
 
 	@Override
