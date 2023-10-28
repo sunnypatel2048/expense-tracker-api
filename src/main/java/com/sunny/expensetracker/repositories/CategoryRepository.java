@@ -8,7 +8,7 @@ import com.sunny.expensetracker.exceptions.EtResourceNotFoundException;
 
 public interface CategoryRepository {
 
-	List<Category> finaAll(Integer userId) throws EtResourceNotFoundException;
+	List<Category> findAll(Integer userId) throws EtResourceNotFoundException;
 	
 	Category findById(Integer userId, Integer categoryId) throws EtResourceNotFoundException;
 	

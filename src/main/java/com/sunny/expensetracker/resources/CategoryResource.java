@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +37,13 @@ public class CategoryResource {
 		String description = (String) categoryMap.get("description");
 		Category category = categoryService.addCategory(userId, title, description);
 		return new ResponseEntity<>(category, HttpStatus.CREATED);
+	}
+	
+	@GetMapping("/{categoryId}")
+	public ResponseEntity<Category> getCategoryById(HttpServletRequest request, @PathVariable("categoryId") Integer categoryId) {
+		int userId = (Integer) request.getAttribute("userId");
+		Category category = categoryService.fetchCategoryById(userId, categoryId);
+		return new ResponseEntity<>(category, HttpStatus.OK);
 	}
 
 }

@@ -31,7 +31,7 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 	JdbcTemplate jdbcTemplate;
 	
 	@Override
-	public List<Category> finaAll(Integer userId) throws EtResourceNotFoundException {
+	public List<Category> findAll(Integer userId) throws EtResourceNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
 	}
