@@ -1,5 +1,6 @@
 package com.sunny.expensetracker.resources;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,10 @@ public class CategoryResource {
 	CategoryService categoryService;
 	
 	@GetMapping("")
-	public String getAllCategories(HttpServletRequest request) {
+	public ResponseEntity<List<Category>> getAllCategories(HttpServletRequest request) {
 		int userId = (Integer) request.getAttribute("userId");
-		return "Authenticated! UserId: " + userId;
+		List<Category> categoryList = categoryService.fetchAllCategories(userId);
+		return new ResponseEntity<>(categoryList, HttpStatus.OK);
 	}
 	
 	@PostMapping("")
