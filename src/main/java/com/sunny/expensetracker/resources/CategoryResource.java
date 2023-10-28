@@ -1,14 +1,17 @@
 package com.sunny.expensetracker.resources;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,6 +49,16 @@ public class CategoryResource {
 		int userId = (Integer) request.getAttribute("userId");
 		Category category = categoryService.fetchCategoryById(userId, categoryId);
 		return new ResponseEntity<>(category, HttpStatus.OK);
+	}
+	
+	@PutMapping("/{categoryId}")
+	public ResponseEntity<Map<String, Boolean>> updateCategory(HttpServletRequest request, @RequestBody Category category,
+											@PathVariable("categoryId") Integer categoryId) {
+		int userId = (Integer) request.getAttribute("userId");
+		categoryService.updateCategory(userId, categoryId, category);
+		Map<String, Boolean> map = new HashMap<>();
+		map.put("success", true);
+		return new ResponseEntity<>(map, HttpStatus.OK);
 	}
 
 }
