@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -63,6 +64,17 @@ public class TransactionResource {
 																	@PathVariable("transactionId") Integer transactionId) {
 		int userId = (Integer) request.getAttribute("userId");
 		transactionService.updateTransaction(userId, categoryId, transactionId, transaction);
+		Map<String, Boolean> map = new HashMap<>();
+		map.put("success", true);
+		return new ResponseEntity<>(map, HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/{transactionId}")
+	public ResponseEntity<Map<String, Boolean>> deteteTransaction(HttpServletRequest request, 
+																	@PathVariable("categoryId") Integer categoryId, 
+																	@PathVariable("transactionId") Integer transactionId) {
+		int userId = (Integer) request.getAttribute("userId");
+		transactionService.removeTransaction(userId, categoryId, transactionId);
 		Map<String, Boolean> map = new HashMap<>();
 		map.put("success", true);
 		return new ResponseEntity<>(map, HttpStatus.OK);
