@@ -20,7 +20,7 @@ public class CategoryServiceImpl implements CategoryService {
 	
 	@Override
 	public List<Category> fetchAllCategories(Integer userId) {
-		return categoryRepository.finaAll(userId);
+		return categoryRepository.findAll(userId);
 	}
 
 	@Override
